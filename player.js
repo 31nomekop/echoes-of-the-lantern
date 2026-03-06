@@ -26,20 +26,25 @@ function updatePlayer(){
 }
 
 function drawPlayer(ctx, camera, walkTick = 0){
-
   const x = PLAYER.x - camera.x;
   const y = PLAYER.y - camera.y;
-
   const sway = Math.sin(walkTick * 0.18) * 1.5;
 
-  // lantern glow aura (new visibility improvement)
-  ctx.fillStyle = "rgba(245,198,110,.35)";
+  // larger aura so the keeper reads clearly against the forest
+  ctx.fillStyle = "rgba(245,198,110,.32)";
   ctx.beginPath();
-  ctx.arc(x + 10, y + sway, 26, 0, Math.PI*2);
+  ctx.arc(x + 10, y + sway, 30, 0, Math.PI*2);
   ctx.fill();
 
+  // outer warm ring
+  ctx.strokeStyle = "rgba(245,198,110,.22)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(x + 10, y + sway, 18, 0, Math.PI*2);
+  ctx.stroke();
+
   // player silhouette
-  ctx.fillStyle = "rgba(0,0,0,.95)";
+  ctx.fillStyle = "rgba(3,3,3,.94)";
   ctx.beginPath();
   ctx.arc(x, y - 10, 9, 0, Math.PI*2);
   ctx.fill();
