@@ -1,5 +1,4 @@
 const SAVE_KEY = "echoes-save-v03";
-const scene = document.getElementById("scene");
 const intro = document.getElementById("intro");
 const menu = document.getElementById("menu");
 const settings = document.getElementById("settings");
@@ -10,8 +9,21 @@ const line2 = document.getElementById("line2");
 const tapPrompt = document.getElementById("tapPrompt");
 const lanternButton = document.getElementById("lanternButton");
 const continueBtn = document.getElementById("continueBtn");
+const gameWrap = document.getElementById("gameWrap");
+const backToMenuBtn = document.getElementById("backToMenuBtn");
+const devBadge = document.getElementById("devBadge");
+const archiveList = document.getElementById("archiveList");
+const discoverToast = document.getElementById("discoverToast");
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-function createFireflies(count = 18){
+let running = false;
+let tick = 0;
+let camera = {x: 0, y: 0};
+let timeOfDay = 0.35;
+let discovered = [];
+
+function createFireflies(count = 20){
   const wrap = document.getElementById("fireflies");
   wrap.innerHTML = "";
   for(let i=0;i<count;i++){
@@ -26,12 +38,36 @@ function createFireflies(count = 18){
   }
 }
 
+function fitCanvas(){
+  canvas.width = window.innerWidth * devicePixelRatio;
+  canvas.height = window.innerHeight * devicePixelRatio;
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
+  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+}
+window.addEventListener("resize", fitCanvas);
+
 function hasSave(){
+  try{return !!localStorage.getItem(SAVE_KEY);}catch{return false;}
+}
+
+function loadSave(){
   try{
-    return !!localStorage.getItem(SAVE_KEY);
-  }catch{
-    return false;
-  }
+    const raw = localStorage.getItem(SAVE_KEY);
+    const data = raw ? JSON.parse(raw) : {};
+    discovered = Array.isArray(data.discovered) ? data.discovered : [];
+    const dev = !!data.devMode;
+    const toggle = document.getElementById("devToggle");
+    toggle.checked = dev;
+    devBadge.classList.toggle("hidden", !dev);
+  }catch{}
+}
+
+function persistSave(extra = {}){
+  const current = hasSave() ? JSON.parse(localStorage.getItem(SAVE_KEY)) : {};
+  const next = {...current, discovered, ...extra};
+  localStorage.setItem(SAVE_KEY, JSON.stringify(next));
+  updateContinueState();
 }
 
 function updateContinueState(){
@@ -41,7 +77,7 @@ function updateContinueState(){
 }
 
 function showPanel(target){
-  [intro, menu, settings, archive, credits].forEach(p => p.classList.add("hidden"));
+  [intro, menu, settings, archive, credits, gameWrap].forEach(p => p.classList.add("hidden"));
   target.classList.remove("hidden");
 }
 
@@ -49,16 +85,8 @@ function startIntro(){
   showPanel(intro);
   line1.classList.remove("hidden");
   setTimeout(() => line1.classList.add("show"), 250);
-
-  setTimeout(() => {
-    line2.classList.remove("hidden");
-    line2.classList.add("show");
-  }, 1700);
-
-  setTimeout(() => {
-    tapPrompt.classList.remove("hidden");
-    tapPrompt.classList.add("show");
-  }, 3200);
+  setTimeout(() => { line2.classList.remove("hidden"); line2.classList.add("show"); }, 1700);
+  setTimeout(() => { tapPrompt.classList.remove("hidden"); tapPrompt.classList.add("show"); }, 3200);
 }
 
 function awakenLantern(){
@@ -66,57 +94,101 @@ function awakenLantern(){
   glow.style.transition = "transform 1.25s ease, opacity 1.25s ease";
   glow.style.transform = "scale(1.55)";
   glow.style.opacity = "1";
-
-  scene.animate([
-    { transform: "scale(1) translateY(0)", filter: "brightness(1)" },
-    { transform: "scale(1.02) translateY(-4px)", filter: "brightness(1.08)" },
-    { transform: "scale(1) translateY(0)", filter: "brightness(1)" }
-  ], { duration: 1800, easing: "ease-in-out" });
-
   setTimeout(() => showPanel(menu), 1450);
 }
 
-lanternButton.addEventListener("click", awakenLantern);
+function renderArchive(){
+  archiveList.innerHTML = "";
+  ["Glow Wisp"].forEach(name => {
+    const item = document.createElement("div");
+    item.className = "archive-entry " + (discovered.includes(name) ? "unlocked" : "");
+    item.textContent = discovered.includes(name) ? name : "Unknown Echo";
+    archiveList.appendChild(item);
+  });
+}
 
-document.getElementById("newGameBtn").addEventListener("click", () => {
-  alert("Chunk 2 will add the first playable forest transition.\n\nThis first chunk locks the correct intro, menu, navigation, PWA base, and upload workflow.");
+function startGame(newGame = true){
+  showPanel(gameWrap);
+  fitCanvas();
+  if(newGame){
+    resetPlayer();
+    resetEchoes();
+  }
+  generateWorld();
+  running = true;
+  if(newGame){ persistSave({}); }
+  loop();
+}
+
+function stopGame(){
+  running = false;
+  showPanel(menu);
+}
+
+function showToast(text){
+  discoverToast.textContent = text;
+  discoverToast.classList.remove("hidden");
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => discoverToast.classList.add("hidden"), 1800);
+}
+
+canvas.addEventListener("pointerdown", (e) => {
+  if(!running) return;
+  const rect = canvas.getBoundingClientRect();
+  PLAYER.tx = e.clientX + camera.x;
+  PLAYER.ty = e.clientY + camera.y;
 });
 
-document.getElementById("archiveBtn").addEventListener("click", () => showPanel(archive));
+function update(){
+  tick += 1;
+  updatePlayer();
+  camera.x = PLAYER.x - (window.innerWidth / 2);
+  camera.y = PLAYER.y - (window.innerHeight / 2);
+  camera.x = Math.max(0, Math.min(camera.x, WORLD.width - window.innerWidth));
+  camera.y = Math.max(0, Math.min(camera.y, WORLD.height - window.innerHeight));
+  checkEchoDiscovery(PLAYER, (echo) => {
+    if(!discovered.includes(echo.name)){
+      discovered.push(echo.name);
+      persistSave({});
+      renderArchive();
+    }
+    showToast(`Discovered: ${echo.name}`);
+  });
+}
+
+function draw(){
+  drawWorld(ctx, camera, timeOfDay);
+  drawEchoes(ctx, camera, tick);
+  drawPlayer(ctx, camera, tick);
+  drawLighting(ctx, camera, PLAYER);
+}
+
+function loop(){
+  if(!running) return;
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+lanternButton.addEventListener("click", awakenLantern);
+document.getElementById("newGameBtn").addEventListener("click", () => startGame(true));
+continueBtn.addEventListener("click", () => startGame(false));
+document.getElementById("archiveBtn").addEventListener("click", () => { renderArchive(); showPanel(archive); });
 document.getElementById("settingsBtn").addEventListener("click", () => showPanel(settings));
 document.getElementById("creditsBtn").addEventListener("click", () => showPanel(credits));
-continueBtn.addEventListener("click", () => {
-  alert("Continue is wired correctly and stays visible but greyed out until a save exists. Actual save resume arrives when the playable world chunk is added.");
-});
-
-document.querySelectorAll("[data-back='menu']").forEach(btn => {
-  btn.addEventListener("click", () => showPanel(menu));
-});
+document.querySelectorAll("[data-back='menu']").forEach(btn => btn.addEventListener("click", () => showPanel(menu)));
+backToMenuBtn.addEventListener("click", stopGame);
 
 document.getElementById("devToggle").addEventListener("change", (e) => {
-  try{
-    const current = JSON.parse(localStorage.getItem(SAVE_KEY) || "{}");
-    current.devMode = !!e.target.checked;
-    localStorage.setItem(SAVE_KEY, JSON.stringify(current));
-  }catch{}
-});
-
-scene.addEventListener("pointerdown", () => {
-  if(menu.classList.contains("hidden")) return;
-  const glow = document.getElementById("lanternGlow");
-  glow.animate([
-    { transform: "scale(1)", opacity: .72 },
-    { transform: "scale(1.1)", opacity: .92 },
-    { transform: "scale(1)", opacity: .72 }
-  ], { duration: 750, easing: "ease-out" });
+  devBadge.classList.toggle("hidden", !e.target.checked);
+  persistSave({ devMode: !!e.target.checked });
 });
 
 createFireflies();
+loadSave();
 updateContinueState();
 startIntro();
 
 if("serviceWorker" in navigator){
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
-  });
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
 }

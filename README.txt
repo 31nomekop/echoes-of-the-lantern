@@ -1,60 +1,22 @@
-# Echoes of the Lantern — Chunk 1 Foundation
+# Echoes of the Lantern — Chunk 2 Playable Clearing
 
-This chunk includes:
-- correct intro tone (A -> C style opening)
-- lantern-first menu direction
-- vertical menu layout
-- Continue button visible but greyed out
-- Settings / Archive / Credits navigation shells
-- Developer Mode toggle path in Settings
-- PWA files for iPhone Home Screen install
-- service worker for offline base
-
-What this chunk does NOT include yet:
-- playable forest movement
-- companion quiz
-- Mosswood Trail gameplay
-- archive entries
-- day/night cycle
-- audio system
-
-## Upload Instructions (iPhone / GitHub)
-
-1. Unzip this package on your iPhone.
-2. Open your GitHub repo.
-3. Choose Upload files.
-4. Select ALL files from the unzipped folder.
-5. Commit changes.
-6. Open the GitHub Pages link in Safari.
-7. Add to Home Screen.
-
-## Chunk Plan
-
-### Chunk 1
-Intro, menu, navigation, PWA base
-
-### Chunk 2
-Playable Mosswood Trail shell:
-- tap to walk
+This chunk adds:
+- first playable Mosswood Trail clearing
+- top-down movement
 - silhouette lantern keeper
 - medium lantern radius
-- connected clearings
-- proper New Game transition
+- first discoverable echo
+- archive unlock for Glow Wisp
+- Continue now re-enters the clearing once a save exists
 
-### Chunk 3
-Companion encounter:
-- quiz
-- companion arrival effects by echo type
-- follow behaviour
+## Upload Instructions
+1. Unzip this package on your iPhone.
+2. Open your GitHub repo.
+3. Upload ALL files from the folder.
+4. Let GitHub replace matching files.
+5. Commit changes.
+6. Open your site in Safari and refresh once.
 
-### Chunk 4
-Echo discovery + archive:
-- discover on reach
-- archive reveal by lantern light
-- silhouettes for unknown echoes
-
-### Chunk 5
-Atmosphere + time + audio:
-- dawn/day/dusk/night
-- fireflies, mist, glowing plants
-- piano/chimes + forest ambience
+## Notes
+- This chunk intentionally focuses on the first playable world.
+- Companion quiz, archive reveal animation, atmosphere expansion, and full audio come in later chunks.
