@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Echoes of the Lantern</title>
+  <meta name="theme-color" content="#0d1a22">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <div id="scene" class="scene">
+      <div class="mist mist-a"></div>
+      <div class="mist mist-b"></div>
+      <div id="fireflies"></div>
+
+      <section id="intro" class="panel active" aria-live="polite">
+        <div class="center-wrap">
+          <div id="lanternWrap" class="lantern-wrap">
+            <button id="lanternButton" class="lantern-btn" aria-label="Awaken the lantern">
+              <div id="lanternGlow" class="lantern-glow"></div>
+              <img src="icon-512.png" alt="" class="lantern-art">
+            </button>
+          </div>
+
+          <div id="introText" class="intro-text">
+            <p id="line1" class="fade-line hidden">The world still remembers...</p>
+            <p id="line2" class="fade-line hidden">...the echoes of the lantern.</p>
+            <p id="tapPrompt" class="tap-prompt hidden">Tap the lantern to awaken it.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="menu" class="panel hidden">
+        <div class="menu-shell">
+          <div class="title-lantern">
+            <img src="icon-192.png" alt="" class="menu-icon">
+          </div>
+          <h1 class="game-title">Echoes of the Lantern</h1>
+
+          <nav class="menu-buttons">
+            <button id="continueBtn" class="menu-btn disabled" disabled>Continue</button>
+            <button id="newGameBtn" class="menu-btn primary">New Game</button>
+            <button id="archiveBtn" class="menu-btn">Echo Archive</button>
+            <button id="settingsBtn" class="menu-btn">Settings</button>
+            <button id="creditsBtn" class="menu-btn">Credits</button>
+          </nav>
+
+          <p class="menu-hint">Lantern first. World second. Core systems arrive in the next chunks.</p>
+        </div>
+      </section>
+
+      <section id="settings" class="panel hidden">
+        <div class="card">
+          <h2>Settings</h2>
+          <label class="setting-row">
+            <span>Developer Mode</span>
+            <input id="devToggle" type="checkbox">
+          </label>
+          <p class="card-copy">Developer mode becomes useful in later chunks. It is included now so the setting path is already in place.</p>
+          <button data-back="menu" class="menu-btn">Back</button>
+        </div>
+      </section>
+
+      <section id="archive" class="panel hidden">
+        <div class="card">
+          <h2>Echo Archive</h2>
+          <p class="card-copy">Chunk 1 includes the archive screen shell only. Actual Echo entries arrive in Chunk 4.</p>
+          <div class="archive-placeholder">
+            <div class="entry locked"></div>
+            <div class="entry locked"></div>
+            <div class="entry locked"></div>
+          </div>
+          <button data-back="menu" class="menu-btn">Back</button>
+        </div>
+      </section>
+
+      <section id="credits" class="panel hidden">
+        <div class="card">
+          <h2>Credits</h2>
+          <p class="card-copy"><strong>Project:</strong> Echoes of the Lantern</p>
+          <p class="card-copy"><strong>Current build:</strong> Chunk 1 foundation</p>
+          <p class="card-copy"><strong>Purpose:</strong> intro, menu, navigation, PWA base</p>
+          <button data-back="menu" class="menu-btn">Back</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
