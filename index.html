@@ -1,141 +1,215 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#101823" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Echoes" />
   <title>Echoes of the Lantern</title>
+  <meta name="theme-color" content="#0e1a22" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
-  <link rel="icon" href="assets/icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div id="app" class="app-shell">
-    <div id="saveFlash" class="save-flash hidden">🕯 Lantern flicker = progress saved</div>
+  <div id="app">
+    <section id="titleScreen" class="screen active">
+      <div class="title-backdrop">
+        <div class="floating-wisp w1"></div>
+        <div class="floating-wisp w2"></div>
+        <div class="floating-wisp w3"></div>
+      </div>
 
-    <section id="introScreen" class="screen active intro-screen">
-      <div class="intro-stage">
-        <div class="mist mist-a"></div>
-        <div class="mist mist-b"></div>
-        <div id="lanternOrb" class="lantern-orb">
-          <div class="lantern-body">🕯</div>
-          <div class="echo-particles"></div>
+      <div class="title-card">
+        <div id="devBuildTag" class="dev-build-tag hidden">DEV BUILD</div>
+        <div class="title-lantern-wrap">
+          <div id="titleLantern" class="title-lantern">
+            <div class="lantern-body"></div>
+            <div class="lantern-flame"></div>
+            <div class="lantern-aura"></div>
+          </div>
         </div>
-        <div class="intro-copy">
-          <p class="intro-line fade-in delay-1">The world still remembers…</p>
-          <h1 class="game-title fade-in delay-2">Echoes of the Lantern</h1>
-          <p class="intro-sub fade-in delay-3">A cozy mystery creature-collecting adventure.</p>
+        <p class="intro-line fade1">The world still remembers…</p>
+        <h1 id="gameTitle">Echoes of the Lantern</h1>
+        <p class="intro-line fade2">…the Echoes of the Lantern.</p>
+
+        <div class="menu">
+          <button id="continueBtn" class="menu-btn" disabled>Continue</button>
+          <button id="newGameBtn" class="menu-btn primary">New Game</button>
+          <button id="archiveBtn" class="menu-btn">Echo Archive</button>
+          <button id="settingsBtn" class="menu-btn">Settings</button>
+          <button id="creditsBtn" class="menu-btn">Credits</button>
+        </div>
+
+        <p class="title-subtext">Tap the title 5 times to toggle Developer Mode.</p>
+      </div>
+    </section>
+
+    <section id="nameScreen" class="screen">
+      <div class="panel">
+        <h2>Lantern Keeper</h2>
+        <p>You are a Lantern Keeper. What is your name?</p>
+        <input id="playerNameInput" maxlength="20" placeholder="Enter your name" />
+        <div class="btn-row">
+          <button id="nameBackBtn" class="menu-btn">Back</button>
+          <button id="nameNextBtn" class="menu-btn primary">Continue</button>
         </div>
       </div>
-      <div class="card start-card fade-in delay-4">
-        <label class="label">World title</label>
-        <div class="static-field">Lantern Keeper</div>
-        <label class="label" for="playerName">Your name</label>
-        <input id="playerName" maxlength="18" placeholder="Enter your name" />
-        <button id="startBtn" class="primary">Begin journey</button>
-        <p class="hint">Subtle motion is enabled. The lantern shifts gently with movement instead of using gimmicky controls.</p>
+    </section>
+
+    <section id="bondScreen" class="screen">
+      <div class="panel">
+        <h2>Echo Bond</h2>
+        <p class="small-copy">Answer a few instinctive questions. The lantern will suggest a companion, but you can reroll or choose manually.</p>
+        <div id="bondQuestionWrap"></div>
+        <div id="bondAnswers" class="bond-answers"></div>
+        <div class="progress-wrap">
+          <div id="bondProgressText">Question 1 / 3</div>
+          <div class="progress-bar"><span id="bondProgressFill"></span></div>
+        </div>
+        <div class="btn-row">
+          <button id="bondBackBtn" class="menu-btn">Back</button>
+        </div>
       </div>
     </section>
 
-    <section id="bondScreen" class="screen card">
-      <h2>Echo Bond</h2>
-      <p class="muted">The lantern reads your nature and reveals a companion. This prototype uses a light randomised reveal, with the manual choice option ready as well.</p>
-      <div class="question-grid">
-        <div class="question-box">You hear something move in the fog. Do you investigate, observe, call out, or wait?</div>
-        <div class="question-box">Which place pulls you more: forest, arcade, lake, or ruins?</div>
-      </div>
-      <div class="stack gap-sm">
-        <button id="bondRevealBtn" class="primary">Reveal companion</button>
-        <button id="bondManualBtn" class="secondary">Choose manually instead</button>
-      </div>
-    </section>
-
-    <section id="manualScreen" class="screen card">
-      <h2>Choose your companion</h2>
-      <div id="manualChoices" class="companion-grid"></div>
-      <button id="backToBondBtn" class="secondary">Back</button>
-    </section>
-
-    <section id="companionScreen" class="screen card center">
-      <div class="reveal-icon">✨</div>
-      <div class="eyebrow">Echo Bond Resonates With</div>
-      <h2 id="companionName"></h2>
-      <p id="companionDesc" class="muted"></p>
-      <div class="button-row">
-        <button id="acceptCompanionBtn" class="primary">Accept</button>
-        <button id="rerollCompanionBtn" class="secondary">Reveal again</button>
+    <section id="companionScreen" class="screen">
+      <div class="panel">
+        <h2>The lantern resonates with…</h2>
+        <div id="companionRevealCard" class="companion-reveal-card"></div>
+        <div class="btn-row triple">
+          <button id="acceptCompanionBtn" class="menu-btn primary">Accept</button>
+          <button id="rerollCompanionBtn" class="menu-btn">Try Again</button>
+          <button id="chooseCompanionBtn" class="menu-btn">Choose Companion</button>
+        </div>
       </div>
     </section>
 
-    <section id="sanctuaryScreen" class="screen active-grid hidden">
-      <div class="panel main-panel">
-        <div class="panel-head">
+    <section id="manualCompanionScreen" class="screen">
+      <div class="panel">
+        <h2>Choose Companion</h2>
+        <div id="manualCompanionGrid" class="manual-companion-grid"></div>
+        <div class="btn-row">
+          <button id="manualBackBtn" class="menu-btn">Back</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="locationScreen" class="screen">
+      <div class="location-title-wrap">
+        <div id="locationTitle" class="location-title">🌲 Mosswood Trail</div>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen">
+      <div class="hud top">
+        <div class="hud-left">
+          <div id="autosaveIndicator" class="autosave-indicator">🕯 Progress saved</div>
+          <div id="lanternStateBadge" class="badge amber">Amber Flame</div>
+        </div>
+        <div class="hud-right">
+          <button id="journalBtn" class="hud-btn">Journal</button>
+          <button id="titleBtn" class="hud-btn">Title</button>
+          <button id="devOpenBtn" class="hud-btn hidden">🛠 DEV</button>
+        </div>
+      </div>
+
+      <div id="gameStageWrap" class="game-stage-wrap path-view">
+        <canvas id="gameCanvas" width="420" height="760"></canvas>
+        <div id="floatingHint" class="floating-hint hidden"></div>
+      </div>
+
+      <div class="hud bottom">
+        <div class="movement-pad">
+          <button class="move-btn" data-move="up">▲</button>
+          <div class="mid-row">
+            <button class="move-btn" data-move="left">◀</button>
+            <button class="move-btn" data-move="right">▶</button>
+          </div>
+          <button class="move-btn" data-move="down">▼</button>
+        </div>
+        <div class="mini-copy">
+          Move with the arrows, or tap the forest. Discover Echoes by approaching them.
+        </div>
+      </div>
+    </section>
+
+    <section id="archiveScreen" class="screen">
+      <div class="panel archive-panel">
+        <div class="archive-head">
           <div>
-            <div class="eyebrow">Sanctuary</div>
-            <h2>Welcome back, <span id="keeperNameDisplay">Keeper</span></h2>
+            <h2>Echo Archive</h2>
+            <p id="archiveCount">0 / 60 Echoes Discovered</p>
           </div>
-          <div id="lanternStateBadge" class="badge">Amber Flame</div>
+          <button id="archiveBackBtn" class="menu-btn">Back</button>
         </div>
+        <div id="archiveBookGlow" class="archive-book-glow"></div>
+        <div id="archiveList" class="archive-list"></div>
+      </div>
+    </section>
 
-        <div class="hero-box">
-          <p class="muted">Your companion</p>
-          <h3 id="sanctuaryCompanion">Unchosen</h3>
-          <p class="soft">Prototype region available: Mosswood Trail. Autosave is represented by a short amber lantern flicker.</p>
-        </div>
-
-        <div id="saveKeyCard" class="info-box hidden">
-          The lantern flickers whenever progress is saved.
-        </div>
-
-        <div class="button-grid">
-          <button id="exploreBtn" class="primary tall">🧭 Explore</button>
-          <button id="saveBtn" class="secondary tall">🕯 Manual Save</button>
-          <button id="archiveBtn" class="secondary tall">📖 Archive</button>
-        </div>
-
-        <div class="progress-group">
-          <div class="between"><span>Sanctuary Harmony</span><span id="harmonyValue">22%</span></div>
-          <div class="progress-bar"><div id="harmonyBar"></div></div>
+    <section id="settingsScreen" class="screen">
+      <div class="panel">
+        <h2>Settings</h2>
+        <label class="setting-row">
+          <span>Sound</span>
+          <input id="soundToggle" type="checkbox" checked />
+        </label>
+        <label class="setting-row">
+          <span>Subtle motion</span>
+          <input id="motionToggle" type="checkbox" checked />
+        </label>
+        <label class="setting-row">
+          <span>Autosave hints</span>
+          <input id="saveHintToggle" type="checkbox" checked />
+        </label>
+        <div class="btn-row">
+          <button id="settingsBackBtn" class="menu-btn">Back</button>
         </div>
       </div>
+    </section>
 
-      <div class="side-column">
-        <div class="panel">
-          <div class="panel-head compact">
-            <h3>Exploration Rhythm</h3>
-            <div id="orientationPill" class="pill">portrait</div>
-          </div>
-          <p>Trips taken: <span id="tripCount">0</span></p>
-          <p>Time of day: <span id="timeOfDay">Day</span></p>
-          <p>Weather: <span id="weatherState">Clear</span></p>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head compact">
-            <h3>Echo Archive</h3>
-            <div class="pill">offline-ready</div>
-          </div>
-          <div id="archiveList" class="archive-list">
-            <p class="muted">No Echoes discovered yet. Step into Mosswood Trail.</p>
-          </div>
+    <section id="creditsScreen" class="screen">
+      <div class="panel">
+        <h2>Credits</h2>
+        <p>Concept, direction and testing by you.</p>
+        <p>Prototype build created here as the first stable gameplay checkpoint target.</p>
+        <div class="btn-row">
+          <button id="creditsBackBtn" class="menu-btn">Back</button>
         </div>
       </div>
     </section>
 
     <section id="discoveryModal" class="modal hidden">
       <div class="modal-card">
-        <div class="eyebrow gold">New Echo Discovered</div>
-        <h2 id="discoveryName"></h2>
-        <div class="button-row left">
-          <div id="discoveryRarity" class="badge"></div>
-          <div class="badge ghost">Echo</div>
+        <div class="modal-kicker">✨ New Echo Discovered</div>
+        <h2 id="discoveryName">Glow Slime</h2>
+        <div id="discoveryMeta" class="discovery-meta"></div>
+        <p id="discoveryDesc" class="discovery-desc"></p>
+        <button id="discoveryCloseBtn" class="menu-btn primary">Continue</button>
+      </div>
+    </section>
+
+    <section id="confirmModal" class="modal hidden">
+      <div class="modal-card">
+        <h2 id="confirmTitle">Start a new journey?</h2>
+        <p id="confirmBody">Your current progress will be replaced.</p>
+        <div class="btn-row">
+          <button id="confirmCancelBtn" class="menu-btn">Cancel</button>
+          <button id="confirmOkBtn" class="menu-btn primary">Confirm</button>
         </div>
-        <p id="discoveryQuote" class="muted quote"></p>
-        <button id="closeDiscoveryBtn" class="primary full">Continue</button>
+      </div>
+    </section>
+
+    <section id="devModal" class="modal hidden">
+      <div class="modal-card">
+        <h2>Developer Menu</h2>
+        <div class="dev-grid">
+          <button data-dev="spawn" class="menu-btn">Spawn Echo</button>
+          <button data-dev="reveal" class="menu-btn">Reveal All Echoes</button>
+          <button data-dev="toggleTime" class="menu-btn">Toggle Day/Night</button>
+          <button data-dev="resonance" class="menu-btn">Trigger Resonance</button>
+          <button data-dev="resetSave" class="menu-btn">Reset Save</button>
+          <button id="devCloseBtn" class="menu-btn primary">Close</button>
+        </div>
       </div>
     </section>
   </div>
