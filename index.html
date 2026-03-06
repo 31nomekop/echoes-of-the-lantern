@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#101823" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Echoes" />
+  <title>Echoes of the Lantern</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+  <link rel="icon" href="assets/icons/favicon-32.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <div id="saveFlash" class="save-flash hidden">🕯 Lantern flicker = progress saved</div>
+
+    <section id="introScreen" class="screen active intro-screen">
+      <div class="intro-stage">
+        <div class="mist mist-a"></div>
+        <div class="mist mist-b"></div>
+        <div id="lanternOrb" class="lantern-orb">
+          <div class="lantern-body">🕯</div>
+          <div class="echo-particles"></div>
+        </div>
+        <div class="intro-copy">
+          <p class="intro-line fade-in delay-1">The world still remembers…</p>
+          <h1 class="game-title fade-in delay-2">Echoes of the Lantern</h1>
+          <p class="intro-sub fade-in delay-3">A cozy mystery creature-collecting adventure.</p>
+        </div>
+      </div>
+      <div class="card start-card fade-in delay-4">
+        <label class="label">World title</label>
+        <div class="static-field">Lantern Keeper</div>
+        <label class="label" for="playerName">Your name</label>
+        <input id="playerName" maxlength="18" placeholder="Enter your name" />
+        <button id="startBtn" class="primary">Begin journey</button>
+        <p class="hint">Subtle motion is enabled. The lantern shifts gently with movement instead of using gimmicky controls.</p>
+      </div>
+    </section>
+
+    <section id="bondScreen" class="screen card">
+      <h2>Echo Bond</h2>
+      <p class="muted">The lantern reads your nature and reveals a companion. This prototype uses a light randomised reveal, with the manual choice option ready as well.</p>
+      <div class="question-grid">
+        <div class="question-box">You hear something move in the fog. Do you investigate, observe, call out, or wait?</div>
+        <div class="question-box">Which place pulls you more: forest, arcade, lake, or ruins?</div>
+      </div>
+      <div class="stack gap-sm">
+        <button id="bondRevealBtn" class="primary">Reveal companion</button>
+        <button id="bondManualBtn" class="secondary">Choose manually instead</button>
+      </div>
+    </section>
+
+    <section id="manualScreen" class="screen card">
+      <h2>Choose your companion</h2>
+      <div id="manualChoices" class="companion-grid"></div>
+      <button id="backToBondBtn" class="secondary">Back</button>
+    </section>
+
+    <section id="companionScreen" class="screen card center">
+      <div class="reveal-icon">✨</div>
+      <div class="eyebrow">Echo Bond Resonates With</div>
+      <h2 id="companionName"></h2>
+      <p id="companionDesc" class="muted"></p>
+      <div class="button-row">
+        <button id="acceptCompanionBtn" class="primary">Accept</button>
+        <button id="rerollCompanionBtn" class="secondary">Reveal again</button>
+      </div>
+    </section>
+
+    <section id="sanctuaryScreen" class="screen active-grid hidden">
+      <div class="panel main-panel">
+        <div class="panel-head">
+          <div>
+            <div class="eyebrow">Sanctuary</div>
+            <h2>Welcome back, <span id="keeperNameDisplay">Keeper</span></h2>
+          </div>
+          <div id="lanternStateBadge" class="badge">Amber Flame</div>
+        </div>
+
+        <div class="hero-box">
+          <p class="muted">Your companion</p>
+          <h3 id="sanctuaryCompanion">Unchosen</h3>
+          <p class="soft">Prototype region available: Mosswood Trail. Autosave is represented by a short amber lantern flicker.</p>
+        </div>
+
+        <div id="saveKeyCard" class="info-box hidden">
+          The lantern flickers whenever progress is saved.
+        </div>
+
+        <div class="button-grid">
+          <button id="exploreBtn" class="primary tall">🧭 Explore</button>
+          <button id="saveBtn" class="secondary tall">🕯 Manual Save</button>
+          <button id="archiveBtn" class="secondary tall">📖 Archive</button>
+        </div>
+
+        <div class="progress-group">
+          <div class="between"><span>Sanctuary Harmony</span><span id="harmonyValue">22%</span></div>
+          <div class="progress-bar"><div id="harmonyBar"></div></div>
+        </div>
+      </div>
+
+      <div class="side-column">
+        <div class="panel">
+          <div class="panel-head compact">
+            <h3>Exploration Rhythm</h3>
+            <div id="orientationPill" class="pill">portrait</div>
+          </div>
+          <p>Trips taken: <span id="tripCount">0</span></p>
+          <p>Time of day: <span id="timeOfDay">Day</span></p>
+          <p>Weather: <span id="weatherState">Clear</span></p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head compact">
+            <h3>Echo Archive</h3>
+            <div class="pill">offline-ready</div>
+          </div>
+          <div id="archiveList" class="archive-list">
+            <p class="muted">No Echoes discovered yet. Step into Mosswood Trail.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="discoveryModal" class="modal hidden">
+      <div class="modal-card">
+        <div class="eyebrow gold">New Echo Discovered</div>
+        <h2 id="discoveryName"></h2>
+        <div class="button-row left">
+          <div id="discoveryRarity" class="badge"></div>
+          <div class="badge ghost">Echo</div>
+        </div>
+        <p id="discoveryQuote" class="muted quote"></p>
+        <button id="closeDiscoveryBtn" class="primary full">Continue</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
