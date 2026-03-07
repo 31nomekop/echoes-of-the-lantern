@@ -284,3 +284,24 @@ startIntro();
 if("serviceWorker" in navigator){
   window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
 }
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const audio = document.getElementById("menuThemeAudio");
+  const lanternBtn = document.getElementById("lanternButton");
+  const newGameBtn = document.getElementById("newGameBtn");
+
+  if(audio && lanternBtn){
+    lanternBtn.addEventListener("click", () => {
+      audio.volume = 0.5;
+      audio.play().catch(()=>{});
+    });
+  }
+
+  if(audio && newGameBtn){
+    newGameBtn.addEventListener("click", () => {
+      audio.pause();
+    });
+  }
+});
