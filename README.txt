@@ -1,16 +1,24 @@
+Echoes of the Lantern — Chunk 3 FIXED
 
-Echoes of the Lantern — Twilight Visibility Patch
+This fixes the broken Chunk 3 regression and keeps the normal intro/menu flow.
 
-This patch makes Mosswood Trail feel like a brighter, welcoming twilight starting zone.
+Included:
+- preserved Chunk 2 intro/menu structure
+- shrine interaction inside the playable world
+- story modal instead of browser popups
+- Glow Wisp companion joins after shrine sequence
+- echo discovery only unlocks after shrine activation
 
-Updated files:
+Replace these files in your repo:
+- index.html
+- styles.css
 - world.js
-- lighting.js
 - player.js
-
-What changed:
-- brighter forest base colors
-- softer darkness overlay
-- larger lantern radius
-- clearer player aura
-- more readable clearings and paths
+- lighting.js
+- echo.js
+- shrine.js
+- companion.js
+- quiz.js
+- app.js
+- manifest.json
+- sw.js

@@ -1,6 +1,6 @@
-const CACHE_NAME = "echoes-chunk2-v1";
+const CACHE_NAME = "echoes-chunk3-fixed-v1";
 const ASSETS = [
-  "./","./index.html","./styles.css","./app.js","./world.js","./player.js","./lighting.js","./echo.js","./manifest.json","./icon-192.png","./icon-512.png","./apple-touch-icon.png"
+  "./","./index.html","./styles.css","./app.js","./world.js","./player.js","./lighting.js","./echo.js","./shrine.js","./companion.js","./quiz.js","./manifest.json","./icon-192.png","./icon-512.png","./apple-touch-icon.png"
 ];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));

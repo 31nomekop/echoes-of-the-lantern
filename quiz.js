@@ -1,7 +1,7 @@
-
-function startQuiz(){
-alert("The lantern remembers...");
-alert("Something answers its call.");
-spawnCompanion(SHRINE.x+40,SHRINE.y);
-alert("Glow Wisp has joined you.");
+function buildStoryButton(label, onClick, primary = false){
+  const btn = document.createElement("button");
+  btn.className = "story-btn" + (primary ? " primary" : "");
+  btn.textContent = label;
+  btn.onclick = onClick;
+  return btn;
 }

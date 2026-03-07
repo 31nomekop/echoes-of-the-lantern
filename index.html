@@ -1,22 +1,106 @@
-
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Echoes of the Lantern</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Echoes of the Lantern</title>
+  <meta name="theme-color" content="#0d1a22">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<canvas id="game"></canvas>
+  <div id="scene" class="scene">
+    <div class="mist mist-a"></div>
+    <div class="mist mist-b"></div>
+    <div id="fireflies"></div>
 
-<script src="world.js"></script>
-<script src="player.js"></script>
-<script src="lighting.js"></script>
-<script src="echo.js"></script>
-<script src="shrine.js"></script>
-<script src="companion.js"></script>
-<script src="quiz.js"></script>
-<script src="app.js"></script>
+    <section id="intro" class="panel">
+      <div class="center-wrap">
+        <button id="lanternButton" class="lantern-btn" aria-label="Awaken the lantern">
+          <div id="lanternGlow" class="lantern-glow"></div>
+          <img src="icon-512.png" alt="" class="lantern-art">
+        </button>
 
+        <div class="intro-text">
+          <p id="line1" class="fade-line hidden">The world still remembers...</p>
+          <p id="line2" class="fade-line hidden">...the echoes of the lantern.</p>
+          <p id="tapPrompt" class="tap-prompt hidden">Tap the lantern to awaken it.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="menu" class="panel hidden">
+      <div class="menu-shell">
+        <div class="title-lantern">
+          <img src="icon-192.png" alt="" class="menu-icon">
+        </div>
+        <h1 class="game-title">Echoes of the Lantern</h1>
+
+        <nav class="menu-buttons">
+          <button id="continueBtn" class="menu-btn disabled" disabled>Continue</button>
+          <button id="newGameBtn" class="menu-btn primary">New Game</button>
+          <button id="archiveBtn" class="menu-btn">Echo Archive</button>
+          <button id="settingsBtn" class="menu-btn">Settings</button>
+          <button id="creditsBtn" class="menu-btn">Credits</button>
+        </nav>
+      </div>
+    </section>
+
+    <section id="settings" class="panel hidden">
+      <div class="card">
+        <h2>Settings</h2>
+        <label class="setting-row">
+          <span>Developer Mode</span>
+          <input id="devToggle" type="checkbox">
+        </label>
+        <button data-back="menu" class="menu-btn">Back</button>
+      </div>
+    </section>
+
+    <section id="archive" class="panel hidden">
+      <div class="card">
+        <h2>Echo Archive</h2>
+        <p class="card-copy">Discovered Echoes</p>
+        <div id="archiveList" class="archive-placeholder"></div>
+        <button data-back="menu" class="menu-btn">Back</button>
+      </div>
+    </section>
+
+    <section id="credits" class="panel hidden">
+      <div class="card">
+        <h2>Credits</h2>
+        <p class="card-copy"><strong>Build:</strong> Chunk 3 fixed shrine + companion</p>
+        <button data-back="menu" class="menu-btn">Back</button>
+      </div>
+    </section>
+
+    <section id="gameWrap" class="hidden">
+      <canvas id="gameCanvas"></canvas>
+      <div id="gameHud" class="game-hud">
+        <button id="backToMenuBtn" class="hud-btn">Menu</button>
+        <span id="zoneLabel">Mosswood Trail</span>
+        <span id="devBadge" class="hidden">🛠 DEV</span>
+      </div>
+
+      <div id="discoverToast" class="discover-toast hidden"></div>
+
+      <div id="storyModal" class="story-modal hidden">
+        <div class="story-card">
+          <p id="storyText" class="story-text"></p>
+          <div id="storyActions" class="story-actions"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="world.js"></script>
+  <script src="player.js"></script>
+  <script src="lighting.js"></script>
+  <script src="echo.js"></script>
+  <script src="shrine.js"></script>
+  <script src="companion.js"></script>
+  <script src="quiz.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
